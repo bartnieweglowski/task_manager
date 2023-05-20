@@ -1,1 +1,1 @@
-# Techniczny-projekt-nowatorski
+# Platforma do zarządzania projektami
