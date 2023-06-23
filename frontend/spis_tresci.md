@@ -71,7 +71,7 @@
 
 ## 9.   Załączniki
 9.1 Schematy projektu aplikacji
-9.2 Przykładowe wyniki testów
-9.3 Inne materiały dodatkowe
 
 9.2 Przykładowe wyniki testów
+
+9.3 Inne materiały dodatkowe
