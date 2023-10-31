@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import './Board.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import '@fortawesome/fontawesome-svg-core/styles.css'
@@ -17,6 +17,10 @@ const Board = () => {
 	const [editTaskId, setEditTaskId] = useState(null)
 	const [editedTaskTitle, setEditedTaskTitle] = useState('')
 	const [showDropdown, setShowDropdown] = useState(null)
+	const [description, setDescription] = useState('');
+	const [isEditingTaskTitle, setIsEditingTaskTitle] = useState(false);
+  
+
 
 	const handleDragStart = (e, card) => {
 		e.dataTransfer.setData('cardId', card.id)
@@ -56,26 +60,28 @@ const Board = () => {
 
 	const handleSaveTask = () => {
 		if (editTaskId) {
-			const updatedCards = cards.map(card => (card.id === editTaskId ? { ...card, title: editedTaskTitle } : card))
+			const updatedCards = cards.map(card => (card.id === editTaskId ? { ...card, title: editedTaskTitle, description } : card))
 			setCards(updatedCards)
 		} else {
 			const newTaskId = cards.length + 1
 			const newTask = {
 				id: newTaskId,
-				title: newTaskText,
+				title: newTaskText, description,
+				taskTitle : editedTaskTitle,
 				status: 'Todo',
 			}
 			setCards([...cards, newTask])
 		}
-
+		setIsEditingTaskTitle(false);
 		handleCloseModal()
 	}
 
 	const handleEditTask = (taskId, taskTitle) => {
-		setEditTaskId(taskId)
-		setEditedTaskTitle(taskTitle)
-		setShowModal(true)
-	}
+		setIsEditingTaskTitle(true);
+		setEditTaskId(taskId);
+		setEditedTaskTitle(taskTitle);
+		setShowModal(true);
+	  };
 
 	const toggleDropdown = taskId => {
 		setShowDropdown(showDropdown === taskId ? null : taskId)
@@ -86,6 +92,16 @@ const Board = () => {
 			handleSaveTask()
 		}
 	}
+
+	const saveDescription = (taskId) => {
+		const updatedCards = cards.map(card => {
+		  if (card.id === taskId) {
+			return { ...card, description: description };
+		  }
+		  return card;
+		});
+		setCards(updatedCards)
+	  };
 
 	useEffect(() => {
 		const handleKeyPress = event => {
@@ -105,106 +121,160 @@ const Board = () => {
 
 	return (
 		<div className='board'>
-			<div className='column'>
-				<h2>Todo</h2>
-				<div
-					className='droppable with-scrollbar'
-					onDragOver={e => handleDragOver(e)}
-					onDrop={e => handleDrop(e, 'Todo')}>
-					{cards
-						.filter(card => card.status === 'Todo')
-						.map(card => (
-							<div key={card.id} className='card' draggable onDragStart={e => handleDragStart(e, card)}>
-								{card.title}
-								<div className='button-group'>
-									<div className='dropdown'>
-										<button className='icon-button' onClick={() => toggleDropdown(card.id)}>
-											<FontAwesomeIcon icon={faPen} />
-										</button>
-										{showDropdown === card.id && (
-											<div className='dropdown-content'>
-												<button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
-													Delete
-												</button>
-												<button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
-													Edit
-												</button>
-											</div>
-										)}
-									</div>
-								</div>
-							</div>
-						))}
-					<div className='create-task'>
-						<button onClick={handleCreateTask}>Create Task</button>
+		  <div className='column'>
+			<h2>Todo</h2>
+			<div className='droppable with-scrollbar' onDragOver={(e) => handleDragOver(e)} onDrop={(e) => handleDrop(e, 'Todo')}>
+			  {cards.filter((card) => card.status === 'Todo').map((card) => (
+				<div key={card.id} 
+				className='card'
+				 draggable onDragStart={(e) => handleDragStart(e, card)}>
+				  
+				  <div className='task-title'>
+					{isEditingTaskTitle && card.id === editTaskId ? (
+					  <input
+						type="text"
+						value={editedTaskTitle}
+						onChange={(e) => setEditedTaskTitle(e.target.value)}
+						onKeyDown={(e) => e.key === 'Enter' && handleSaveTask()}
+						onBlur={() => setIsEditingTaskTitle(false)}
+					  />
+					) : (
+					  card.title
+					)}
+					<div className='button-group'>
+					  <div className='dropdown'>
+						<button className='icon-button' onClick={() => toggleDropdown(card.id)}>
+						  <FontAwesomeIcon icon={faPen} />
+						</button>
+						{showDropdown === card.id && (
+						  <div className='dropdown-content'>
+							<button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
+							  Delete
+							</button>
+							<button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
+							  Edit
+							</button>
+						  </div>
+						)}
+					  </div>
+					</div>
+				  </div>
+					<div className='description'>
+					  <textarea
+						value={description}
+						onChange={(e) => setDescription(e.target.value)}
+						placeholder='Enter description'
+					  />
+					  <button className='save-description-button' onClick={() => saveDescription(card.id)}>
+						Save
+					  </button>
 					</div>
 				</div>
+			  ))}
+			  <div className='create-task'>
+				<button onClick={handleCreateTask}>New Task</button>
+			  </div>
 			</div>
-			<div className='column'>
-				<h2>In Progress</h2>
-				<div
-					className='droppable with-scrollbar'
-					onDragOver={e => handleDragOver(e)}
-					onDrop={e => handleDrop(e, 'In Progress')}>
-					{cards
-						.filter(card => card.status === 'In Progress')
-						.map(card => (
-							<div key={card.id} className='card' draggable onDragStart={e => handleDragStart(e, card)}>
-								{card.title}
+		  </div>
+		  <div className='column'>
+  <h2>In Progress</h2>
+  <div className='droppable with-scrollbar' onDragOver={e => handleDragOver(e)} onDrop={e => handleDrop(e, 'In Progress', cards.description)}>
+    {cards.filter(card => card.status === 'In Progress').map(card => (
+      <div key={card.id} className='card' draggable onDragStart={e => handleDragStart(e, card)}>
+        <div className='task-title'>
+          {isEditingTaskTitle && card.id === editTaskId ? (
+            <input
+              type="text"
+              value={editedTaskTitle}
+              onChange={(e) => setEditedTaskTitle(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSaveTask()}
+              onBlur={() => setIsEditingTaskTitle(false)}
+            />
+          ) : (
+            card.title
+          )}
+          <div className='button-group'>
+            <div className='dropdown'>
+              <button className='icon-button' onClick={() => toggleDropdown(card.id)}>
+                <FontAwesomeIcon icon={faPen} />
+              </button>
+              {showDropdown === card.id && (
+                <div className='dropdown-content'>
+                  <button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
+                    Delete
+                  </button>
+                  <button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className='description'>
+          <textarea
+            value={card.description}  // Wykorzystaj opis z karty
+            onChange={(e) => saveDescription(card.id)}
+            placeholder='Enter description'
+          />
+          <button className='save-description-button' onClick={() => saveDescription(card.id)}>
+            Save
+          </button>
+        </div>
+      </div>
+	  ))}
+  </div>
+</div>
+<div className='column'>
+  <h2>Done</h2>
+  <div className='droppable with-scrollbar' onDragOver={e => handleDragOver(e)} onDrop={e => handleDrop(e, 'Done', cards.description)}>
+    {cards.filter(card => card.status === 'Done').map(card => (
+      <div key={card.id} className='card' draggable onDragStart={e => handleDragStart(e, card)}>
+        <div className='task-title'>
+          {isEditingTaskTitle && card.id === editTaskId ? (
+            <input
+              type="text"
+              value={editedTaskTitle}
+              onChange={e => setEditedTaskTitle(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSaveTask()}
+              onBlur={() => setIsEditingTaskTitle(false)}
+            />
+          ) : (
+            card.title
+          )}
+          <div className='button-group'>
+            <div className='dropdown'>
+              <button className='icon-button' onClick={() => toggleDropdown(card.id)}>
+                <FontAwesomeIcon icon={faPen} />
+              </button>
+              {showDropdown === card.id && (
+                <div className='dropdown-content'>
+                  <button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
+                    Delete
+                  </button>
+                  <button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
+                    Edit
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className='description'>
+          <textarea
+            value={card.description}  // Wykorzystaj opis z karty
+            onChange={e => saveDescription(card.id)}
+            placeholder='Enter description'
+          />
+          <button className='save-description-button' onClick={() => saveDescription(card.id)}>
+            Save
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
 
-								<div className='button-group'>
-									<div className='dropdown'>
-										<button className='icon-button' onClick={() => toggleDropdown(card.id)}>
-											<FontAwesomeIcon icon={faPen} />
-										</button>
-										{showDropdown === card.id && (
-											<div className='dropdown-content'>
-												<button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
-													Delete
-												</button>
-												<button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
-													Edit
-												</button>
-											</div>
-										)}
-									</div>
-								</div>
-							</div>
-						))}
-				</div>
-			</div>
-			<div className='column'>
-				<h2>Done</h2>
-				<div
-					className='droppable with-scrollbar'
-					onDragOver={e => handleDragOver(e)}
-					onDrop={e => handleDrop(e, 'Done')}>
-					{cards
-						.filter(card => card.status === 'Done')
-						.map(card => (
-							<div key={card.id} className='card' draggable onDragStart={e => handleDragStart(e, card)}>
-								{card.title}
-								<div className='button-group'>
-									<div className='dropdown'>
-										<button className='icon-button' onClick={() => toggleDropdown(card.id)}>
-											<FontAwesomeIcon icon={faPen} />
-										</button>
-										{showDropdown === card.id && (
-											<div className='dropdown-content'>
-												<button className='delete-button' onClick={() => handleDeleteTask(card.id)}>
-													Delete
-												</button>
-												<button className='edit-button' onClick={() => handleEditTask(card.id, card.title)}>
-													Edit
-												</button>
-											</div>
-										)}
-									</div>
-								</div>
-							</div>
-						))}
-				</div>
-			</div>
 			{showModal && (
 				<div className='modal'>
 					<div className='modal-content'>
@@ -215,37 +285,45 @@ const Board = () => {
 							</button>
 						</div>
 						<div className='modal-body'>
-							{editTaskId && (
-								<div className='form-group'>
-									<label htmlFor='taskTitle'>Type Something:</label>
-									<input
-										type='text'
-										id='taskTitle'
-										value={editedTaskTitle}
-										onChange={e => setEditedTaskTitle(e.target.value)}
-										onKeyPress={handleKeyPress}
-									/>
+						{editTaskId && (
+								<div>
+									<div className='form-group'>
+										<label htmlFor='taskTitle'>Edit Task Title:</label>
+										<textarea
+											id='taskTitle'
+											value={editedTaskTitle}
+											onChange={e => setEditedTaskTitle(e.target.value)}
+											onKeyDown={handleKeyPress}
+										/>
+									</div>
+									<div className='form-group'>
+										<label htmlFor='taskText'>Edit Task Description:</label>
+										<textarea
+											id='taskDescription'
+											value={description}
+											onChange={e => setDescription(e.target.value)}
+											onKeyDown={handleKeyPress}></textarea>
+									</div>
 								</div>
 							)}
 							{!editTaskId && (
 								<div>
 									<div className='form-group'>
-										<label htmlFor='taskFor'>For:</label>
-										<input
-											type='text'
-											id='taskFor'
-											value={newTaskFor}
-											onChange={e => setNewTaskFor(e.target.value)}
-											onKeyPress={handleKeyPress}
+										<label htmlFor='taskDescription'>Task Title:</label>
+										<textarea
+											id='taskTitle'
+											value={editedTaskTitle}
+											onChange={e => setEditedTaskTitle(e.target.value)}
+											onKeyDown={handleKeyPress}
 										/>
 									</div>
 									<div className='form-group'>
-										<label htmlFor='taskText'>Type something:</label>
+										<label htmlFor='taskText'>Description:</label>
 										<textarea
-											id='taskText'
-											value={newTaskText}
-											onChange={e => setNewTaskText(e.target.value)}
-											onKeyPress={handleKeyPress}></textarea>
+											id='taskDescription'
+											value={description}
+											onChange={e => setDescription(e.target.value)}
+											onKeyDown={handleKeyPress}></textarea>
 									</div>
 								</div>
 							)}
@@ -265,4 +343,4 @@ const Board = () => {
 	)
 }
 
-export default Board
+export default Board;
