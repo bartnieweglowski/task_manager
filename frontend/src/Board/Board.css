@@ -4,6 +4,22 @@
   align-items: flex-start;
   padding: 20px;
 }
+.App {
+  height: 100vh;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+  background-color: #333;
+  justify-content: center;
+  width: 100%;
+  padding-bottom: 20px;
+}
+.title  {
+  text-align: center;
+  padding-left: 900px;
+}
 
 .column {
   flex: 1;
@@ -11,11 +27,15 @@
   border-radius: 4px;
   padding: 10px;
   margin-right: 20px;
+  position: relative;
 }
 
 .column h2 {
   font-size: 18px;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .droppable {
@@ -27,18 +47,14 @@
 }
 
 
-.card {
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  padding: 8px;
-  position: relative;
-}
 
 .create-task {
   display: flex;
   justify-content: flex-end;
   margin-top: 16px;
+  position: absolute;
+  top: 0;
+  right: 10px;
 }
 
 .create-task button {
@@ -51,11 +67,6 @@
   cursor: pointer;
 }
 
-.task-title {
-  font-weight: bold;
-}
-
-
 .modal {
   position: fixed;
   top: 0;
@@ -67,7 +78,6 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
 }
-
 .modal-content {
   background-color: #ffffff;
   padding: 20px;
@@ -136,16 +146,200 @@ textarea {
 }
 
 .delete-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: #f9f9f9;
-  color:#f44336;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
+  color: red
 }
 
-.delete-button:hover {
-  color: #ff3333;
+.edit-button {
+  color: blue
+}
+
+.delete-button,
+.edit-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.delete-button:hover,
+.edit-button:hover {
+  background-color: #f0f0f0;
+}
+  
+  .with-scrollbar {
+  overflow-y: scroll;
+  max-height: 700px;
+  }
+  
+  .button-group {
+    display: flex;
+    align-items: center;
+
+  }
+  
+  .icon-button {
+    border: none;
+    background-color: transparent;
+    font-size: 16px;
+    color: black;
+    cursor: pointer;
+  }
+  
+  .dropdown {
+  position: relative;
+  display: inline-block;
+  }
+  
+  .dropdown-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none; 
+    min-width: 100px;
+    padding: 5px 0; 
+    background-color: #f9f9f9; 
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1); 
+    z-index: 1;
+    border-radius: 4px; 
+}
+
+.dropdown-content a {
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  color: black; 
+  transition: background-color 0.2s; 
+}
+
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+ .description {
+    background-color: #f4f4f4;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    resize: vertical;
+  } 
+  
+  .description textarea {
+    background-color: #f4f4f4;
+    width: 98%;
+    border: none;
+    resize: none;
+  }
+  
+  .save-description-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-left: 430px;
+  }
+  
+  .save-description-button:hover {
+    background-color: #2574a9;
+  }
+
+  .task-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+  }
+
+  .task-title input[type="text"] {
+    flex-grow: 1;
+    margin-right: 10px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  
+  .card-labels {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .card-label {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 8px;
+    margin-right: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+
+.modal .form-group input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.due-date {
+  padding: 5px 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  text-align: center;
+  color: black; /* Biały tekst */
+  font-size: 0.9em;
+}
+
+.priority-tag {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  margin-right: 10px; /* Dodaje odstęp od tytułu zadania */
+  text-align: center; /* Centruje tekst w tagu */
+}
+
+.priority-low {
+  background-color: darkseagreen;
+}
+
+.priority-medium {
+  background-color: goldenrod;
+}
+
+.priority-high {
+  background-color: indianred;
+}
+
+.priority-tag:hover {
+  opacity: 0.9;
+}
+
+.priority-and-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.assigned-user {
+  font-size: 0.8em; /* Dostosuj do potrzeb */
+  color: #666; /* Dostosuj do potrzeb */
+  margin: 5px 0; /* Dostosuj do potrzeb */
 }

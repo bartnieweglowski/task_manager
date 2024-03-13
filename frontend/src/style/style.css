@@ -1,0 +1,67 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.title {
+  background-color: #333;
+  padding: 20px;
+  text-align: center;
+}
+
+.color-switcher {
+  background-color: #333;
+}
+
+.title h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-left: 40vw;
+}
+
+header {
+  background-color: #333;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+nav ul li {
+  margin: 0 10px;
+  padding: 10px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+nav ul li a:hover {
+  background-color: #555;
+}
+
+.register-button {
+  text-align: right;
+  margin-right: 30px;
+  padding: 10px;
+}
+
+.register-button a {
+  text-decoration: none;
+  color: #333;
+  background-color: #ccc;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
