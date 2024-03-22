@@ -47,13 +47,10 @@ const Board = () => {
 
     const handleDeleteTask = async (taskId) => {
         try {
-            // Próba usunięcia zadania i oczekiwanie na odpowiedź z serwera
             await deleteTask(taskId);
-            // Jeśli serwer odpowiedział bez błędu, usuwamy zadanie z UI
             const updatedCards = cards.filter(card => card.id !== taskId);
             setCards(updatedCards);
         } catch (error) {
-            // Obsługa błędów, np. nie można było usunąć zadania
             console.error("Nie można usunąć zadania:", error);
         }
     };

@@ -2,18 +2,21 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Board from './Board/Board';
-import Communication from './Communication/Communication';
-import CreateProject from './Create_project/Create_project';
-import ManageTasks from './Manage_tasks/Manage_tasks';
-import ProgressMonitoring from './Progress_monitoring/Progress_monitoring';
-import Notifications from './Notifications/Notifications';
-import TimeTracking from './TimeTracking/TimeTracking'; 
 import './ColorSwitcher/switcher.scss'
+import './style/style.css'
+import { CardsContext } from './Board/Board';
+import CalendarView from './Calendar/CalendarView';
+import TimeTracking from './TimeTracking/TimeTracking';
+import Dashboard from './Dashboard/Dashboard.';
+
+
+
 
 
 const App = () => {
-
+  const [cards, setCards] = useState([]);
   const [colorTheme, setColorTheme] = useState('theme-white');
+
   
   useEffect(()=> {
       const currentThemeColor = localStorage.getItem('theme-color');
@@ -71,39 +74,32 @@ const App = () => {
                 <Link to="/board">Board</Link>
               </li>
               <li>
-                <Link to="/create-project">Create Project</Link>
-              </li>
-              <li>
-                <Link to="/manage-tasks">Manage Tasks</Link>
-              </li>
-              <li>
-                <Link to="/progress-monitoring">Progress Monitoring</Link>
-              </li>
-              <li>
-                <Link to="/communication">Communication</Link>
-              </li>
-              <li>
-                <Link to="/notifications">Notifications</Link>
+                <Link to="/calendar">Calendar</Link>
               </li>
               <li>
                 <Link to="/time-tracking">Time Tracking</Link>
               </li>
+              <li>
+                <Link to="/dashboard">Dashboard</Link>
+              </li>
             </ul>
           </nav>
         </header>
-
+        <CardsContext.Provider value={{ cards, setCards }}>
         <Routes>
+        
           <Route path="/board" element={<Board />} />
-          <Route path="/create-project" element={<CreateProject />} />
-          <Route path="/manage-tasks" element={<ManageTasks />} />
-          <Route path="/progress-monitoring" element={<ProgressMonitoring />} />
-          <Route path="/communication" element={<Communication />} />
-          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/calendar" element={<CalendarView />} />
           <Route path="/time-tracking" element={<TimeTracking />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          
         </Routes>
+        </CardsContext.Provider>
       </div>
     </Router>
   );
 };
+
+
 
 export default App;

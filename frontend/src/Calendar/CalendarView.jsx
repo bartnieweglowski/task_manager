@@ -1,8 +1,8 @@
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { CardsContext } from '../Board/Board';
 import {Calendar, momentLocalizer} from 'react-big-calendar';
-import Modal from './Modal'; // Zakładając, że Modal jest odpowiednio zaimplementowany
+import Modal from './Modal'; 
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { updateTask, deleteTask } from '../services/taskService';
@@ -17,21 +17,24 @@ function CalendarView() {
     const [showTaskDetailsModal, setShowTaskDetailsModal] = useState(false);
     const [endDate, setEndDate] = useState(new Date());
 
+    useEffect(() => {
+        const fetchTasks = async () => {
+        };
+        fetchTasks();
+    }, [cards]);
+
 
     const assignTaskToDate = async (taskId, newStartDate, newEndDate) => {
         const taskToUpdate = cards.find(card => card.id === taskId);
         if (taskToUpdate) {
-            // Przygotowanie zaktualizowanego zadania
             const updatedTask = { 
                 ...taskToUpdate, 
                 start_date: newStartDate, 
                 end_date: newEndDate 
             };
     
-            // Wywołanie updateTask z serwisu taskService, aby zaktualizować zadanie w bazie danych
             const response = await updateTask(taskId, updatedTask);
             if (response) {
-                // Aktualizacja stanu cards w kontekście CardsContext
                 setCards(prevCards => prevCards.map(card => 
                     card.id === taskId ? { ...card, ...updatedTask } : card
                 ));
@@ -44,6 +47,7 @@ function CalendarView() {
         setSelectedTask(task);
         setShowTaskDetailsModal(true);
     };
+
     
     const onEventDrop = ({ event, start, end }) => {
         const task = cards.find(card => card.title === event.title);
@@ -57,27 +61,23 @@ function CalendarView() {
     const onEventResize = ({ event, start, end }) => {
         const task = cards.find(card => card.title === event.title);
         if (task) {
-            // Tworzymy zaktualizowany obiekt zadania z nowymi datami
             const updatedTask = { ...task, start_date: start, end_date: end };
     
-            // Wywołujemy funkcję updateTask, aby zaktualizować zadanie w bazie danych
             updateTask(task.id, updatedTask).then(() => {
-                // Po pomyślnej aktualizacji w bazie danych, aktualizujemy stan cards
                 setCards(prevCards => prevCards.map(card => 
                     card.id === task.id ? updatedTask : card
                 ));
             }).catch(error => {
                 console.error("Błąd podczas aktualizacji zadania:", error);
-                // Tutaj możesz również obsłużyć błędy, np. informując użytkownika
             });
         }
     };
 
     const events = cards.map(card => ({
         title: card.title,
-        start: new Date(card.start_date), // Użyj nowego pola start_date
-        end: new Date(card.end_date),     // Użyj nowego pola end_date
-        allDay: false, // lub true, jeśli zadanie ma trwać cały dzień
+        start: new Date(card.start_date), 
+        end: new Date(card.end_date),     
+        allDay: false, 
     }));
 
     return (
@@ -108,7 +108,6 @@ function CalendarView() {
              setSelectedTask(null);
         }}
         assignTaskToDate={assignTaskToDate}
-        // Dodaj funkcje do edycji i usuwania zadań
     />
 )}
 {showTaskDetailsModal && selectedTask && (

@@ -50,6 +50,9 @@
     .droppable.with-scrollbar {
         background-color: #bec7e7;
     }
+    .selected-task-details {
+        background-color: #bec7e7;
+    }
 }
 
 .App.theme-orange {
@@ -58,6 +61,9 @@
         background-color: #f4c9b7;
     }
     .droppable.with-scrollbar {
+        background-color: #f4c9b7;
+    }
+    .selected-task-details {
         background-color: #f4c9b7;
     }
 }
@@ -70,6 +76,9 @@
     .droppable.with-scrollbar {
         background-color: #d0b7f4;
     }
+    .selected-task-details {
+        background-color: #d0b7f4;
+    }
 }
 
 .App.theme-green {
@@ -78,6 +87,9 @@
         background-color:#c3e3c1;
     }
     .droppable.with-scrollbar {
+        background-color: #c3e3c1;
+    }
+    .selected-task-details {
         background-color: #c3e3c1;
     }
 }
@@ -92,5 +104,11 @@
     }
     .column h2{
         color: white;
+    }
+    .selected-task-details {
+        background-color: #333;
+    }
+    .selected-task-details p, h3 {
+        color:white;
     }
 }

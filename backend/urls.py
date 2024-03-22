@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import index
 from django.contrib import admin 
-from .views import task_list, task_detail, task_status_counts, UserList, start_task, end_task, task_priority_counts, task_assignee_counts
+from .views import task_list, task_detail, task_status_counts, UserList, task_priority_counts, task_assignee_counts, start_task, end_task, stop_task
 from .views import TaskViewSet 
 from django.views.generic import TemplateView
 
@@ -34,9 +34,10 @@ urlpatterns = [
     path('api/task-priority-counts/', task_priority_counts, name='task-priority-counts'),
     path('api/task-assignee-counts/', task_assignee_counts, name='task-assignee-counts'),
     path('tasks/', task_list),
-    path('tasks/<int:pk>/', task_detail),
     path('tasks/<int:pk>/start/', start_task, name='start_task'),
     path('tasks/<int:pk>/end/', end_task, name='end_task'),
+    path('tasks/<int:pk>/stop/', stop_task, name='stop_task'),
+    path('tasks/<int:pk>/', task_detail),
     path('api/users/', UserList.as_view(), name='user-list'),
     path('', TemplateView.as_view(template_name='index.html'))
   

@@ -1,0 +1,22 @@
+
+@keyframes modalOpen {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.modal-btn {
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.modal-btn-start { background-color: #4CAF50; color: white; }
+.modal-btn-stop { background-color: #f44336; color: white; }
+.modal-btn-reset { background-color: #ff9800; color: white; }
+.modal-btn-end { background-color: #008CBA; color: white; }
+
+.modal-btn:hover {
+  opacity: 0.8;
+}

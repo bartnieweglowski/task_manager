@@ -23,32 +23,34 @@ class UserList(generics.ListAPIView):
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-
-    @action(detail=True, methods=['post'])
-    def assign_date(self, request, pk=None):
-        task = get_object_or_404(Task, pk=pk)
-        start_date = request.data.get('start_date')
-        end_date = request.data.get('end_date')
-        if start_date:
-            task.start_date = start_date
-        if end_date:
-            task.end_date = end_date
-        task.save()
-        return Response({"status": "dates assigned"}) 
-       
-@api_view(['POST'])
+    
+@api_view(['POST'])     
 def start_task(request, pk):
-    task = get_object_or_404(Task, pk=pk)
+    task = Task.objects.get(pk=pk)
     task.start_time = timezone.now()
     task.save()
-    return Response({'status': 'Task timing started', 'start_time': task.start_time})
+    return JsonResponse({'status': 'Task timing started'})
+
+@api_view(['POST'])
+def stop_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if task.start_time:
+        elapsed_time = (timezone.now() - task.start_time).total_seconds()
+        task.update_time_spent(elapsed_time)
+        task.start_time = None  
+        task.save()
+        return Response({'status': 'stopped', 'time_spent': task.time_spent})
+    return Response({'error': 'Task was not started'}, status=400)
 
 @api_view(['POST'])
 def end_task(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    task.end_time = timezone.now()
-    task.save()
-    return Response({'status': 'Task timing ended', 'end_time': task.end_time})
+    task = Task.objects.get(pk=pk)
+    if task.start_time:
+        time_diff = timezone.now() - task.start_time
+        task.time_spent += int(time_diff.total_seconds())
+        task.start_time = None 
+        task.save()
+    return JsonResponse({'status': 'Task timing ended', 'time_spent': task.time_spent})
     
 @csrf_exempt
 def task_list(request):
@@ -95,35 +97,29 @@ def task_detail(request, id):
         return HttpResponse(status=204)
     
 def task_status_counts(request):
-    # Agregowanie zadań według statusu
     counts = Task.objects.values('status').annotate(total=Count('status')).order_by('status')
     
-    # Przekształcanie wyników w słownik
     counts_dict = {count['status']: count['total'] for count in counts}
     
     return JsonResponse(counts_dict)
 
 @api_view(['GET'])
 def task_priority_counts(request):
-    # Agregowanie zadań według priorytetu
     counts = Task.objects.values('priority').annotate(total=Count('priority')).order_by('priority')
     
-    # Przekształcanie wyników w słownik
     counts_dict = {count['priority']: count['total'] for count in counts}
     
     return JsonResponse(counts_dict)
 
 @api_view(['GET'])
 def task_assignee_counts(request):
-    # Agregowanie zadań według przypisanych użytkowników
     counts = Task.objects.values('assigned_to__username').annotate(total=Count('assigned_to')).order_by('assigned_to')
     
-    # Przekształcanie wyników w słownik
     counts_dict = {count['assigned_to__username']: count['total'] for count in counts if count['assigned_to__username']}
     
     return JsonResponse(counts_dict)
 
-    
+
 
 
 def index(request):
