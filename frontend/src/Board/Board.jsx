@@ -30,7 +30,6 @@ const Board = () => {
                 setCards(fetchedTasks);
             } catch (error) {
                 console.error("Błąd podczas pobierania zadań:", error);
-                // Tutaj możesz dodać logikę do obsługi błędów, np. wyświetlenie komunikatu
             }
         };
     
@@ -47,13 +46,17 @@ const Board = () => {
     };
 
     const handleDeleteTask = async (taskId) => {
-        const deleted = await deleteTask(taskId);
-        if (deleted) {
+        try {
+            // Próba usunięcia zadania i oczekiwanie na odpowiedź z serwera
+            await deleteTask(taskId);
+            // Jeśli serwer odpowiedział bez błędu, usuwamy zadanie z UI
             const updatedCards = cards.filter(card => card.id !== taskId);
             setCards(updatedCards);
+        } catch (error) {
+            // Obsługa błędów, np. nie można było usunąć zadania
+            console.error("Nie można usunąć zadania:", error);
         }
     };
-    
 
     const handleDragOver = (e) => {
         e.preventDefault();
@@ -68,19 +71,15 @@ const Board = () => {
             return card;
         });
     
-        // Znajdź kartę, która została przeniesiona
         const movedCard = updatedCards.find(card => card.id === parseInt(cardId));
         if (movedCard) {
             try {
-                // Aktualizacja zadania na backendzie
                 const updatedTask = await updateTask(movedCard.id, { ...movedCard, status: newStatus });
                 if (updatedTask) {
-                    // Aktualizacja stanu po pomyślnej aktualizacji na backendzie
                     setCards(updatedCards);
                 }
             } catch (error) {
                 console.error("Błąd podczas aktualizacji zadania:", error);
-                // Obsługa błędów, np. wyświetlenie komunikatu użytkownikowi
             }
         }
     };
@@ -242,9 +241,7 @@ const Board = () => {
                     setPriority={setCurrentPriority}
                     setAssignedUser={setAssignedUser}
                     assignedUser={assignedUser}
-                    
                 />
-
             )}
         </div>
         </CardsContext.Provider>
