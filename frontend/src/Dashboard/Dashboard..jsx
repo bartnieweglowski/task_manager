@@ -1,35 +1,58 @@
-import React, { useState } from 'react';
-import TaskStatusChart from './TaskStatusChart';
-import TaskPriorityChart from './TaskPriorityChart';
-import TaskAssigneeChart from './TaskAssigneeChart';
+import 'bootstrap/dist/css/bootstrap.css';
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import TotalCards from './TotalCards';
+import CardsByStatus from './CardsByStatus';
+import WIP from './WIP';
+import Throughput from './Throughput';
+import CardsByPriority from './CardsByPriority';
+import './Dashboard.css'
+import { useEffect } from 'react';
+import TodoCount from './ToDoCount';
+import DoneCount from './DoneCount';
+import LeadTimeChart from './LeadTimeChart';
+import TaskAssigneesChart from './TaskAssigneesChart';
+import TimeSpentOnTasksChart from './TimeSpentOnTasksChart';
+
 
 const Dashboard = () => {
-    const [activeChart, setActiveChart] = useState('users');
+    useEffect(() => {
+        const bootstrapCSS = document.createElement('link');
+        bootstrapCSS.href = 'bootstrap/dist/css/bootstrap.min.css';
+        bootstrapCSS.type = 'text/css';
+        bootstrapCSS.rel = 'stylesheet';
+        document.head.appendChild(bootstrapCSS);
 
-    const renderChart = () => {
-        switch (activeChart) {
-            case 'status':
-                return <TaskStatusChart />;
-            case 'priority':
-                return <TaskPriorityChart />;
-            case 'users':
-                return <TaskAssigneeChart />;
-            default:
-                return null;
-        }
-    };
-
+        return () => document.head.removeChild(bootstrapCSS);
+    }, []);
     return (
-        <div>
-            <div className="chart-menu">
-                <button onClick={() => setActiveChart('users')}>Users</button>
-                <button onClick={() => setActiveChart('status')}>Status</button>
-                <button onClick={() => setActiveChart('priority')}>Priority</button>
-            </div>
-            <div className="chart-container">
-                {renderChart()}
-            </div>
-        </div>
+        <Container fluid className="dashboard">
+            <Row className="justify-content-md-center">
+            <Col xs lg="2">
+                    <TodoCount/>
+                </Col>
+                <Col xs lg="2">
+                    <WIP />
+                </Col>
+                <Col xs lg="2">
+                    <DoneCount/>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CardsByPriority />
+                </Col>
+                <Col>
+                    <TaskAssigneesChart/>
+                </Col>
+                <Col>
+                    <Throughput />
+                </Col>
+                <Col>
+                    <TimeSpentOnTasksChart />
+                </Col>
+            </Row>
+        </Container>
     );
 };
 
