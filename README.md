@@ -1,6 +1,6 @@
-# Kanban
+# Task Manager
 
-Kanban is a modern web application designed for efficient task management, offering an intuitive and comprehensive approach to planning and organizing work and daily tasks. It is ideal for individuals and teams looking for a streamlined way to manage their projects and deadlines.
+Task Manager is a modern web application designed for efficient task management, offering an intuitive and comprehensive approach to planning and organizing work and daily tasks. It is ideal for individuals and teams looking for a streamlined way to manage their projects and deadlines.
 
 ## Features
 
